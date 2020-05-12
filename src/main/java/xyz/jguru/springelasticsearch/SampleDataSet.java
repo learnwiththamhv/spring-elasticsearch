@@ -7,9 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.data.elasticsearch.core.query.IndexQuery;
-import xyz.jguru.springelasticsearch.model.Department;
-import xyz.jguru.springelasticsearch.model.Employee;
-import xyz.jguru.springelasticsearch.model.Organization;
+import xyz.jguru.springelasticsearch.model.Author;
+import xyz.jguru.springelasticsearch.model.Category;
+import xyz.jguru.springelasticsearch.model.Song;
 
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
@@ -19,8 +19,10 @@ import java.util.Random;
 public class SampleDataSet {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SampleDataSet.class);
-    private static final String INDEX_NAME = "sample";
-    private static final String INDEX_TYPE = "employee";
+    //private static final String INDEX_NAME = "sample";
+    private static final String INDEX_NAME = "sc_karaoke";
+    //private static final String INDEX_TYPE = "employee";
+    private static final String INDEX_TYPE = "song";
     private static int COUNTER = 0;
 
     @Autowired
@@ -39,14 +41,54 @@ public class SampleDataSet {
         }
     }
 
+//    public void bulk() {
+//        try {
+//            ObjectMapper mapper = new ObjectMapper();
+//            List<IndexQuery> queries = new ArrayList<>();
+//            List<Employee> employees = employees();
+//            for (Employee employee : employees) {
+//                IndexQuery indexQuery = new IndexQuery();
+//                indexQuery.setSource(mapper.writeValueAsString(employee));
+//                indexQuery.setIndexName(INDEX_NAME);
+//                indexQuery.setType(INDEX_TYPE);
+//                queries.add(indexQuery);
+//            }
+//            if (queries.size() > 0) {
+//                template.bulkIndex(queries);
+//            }
+//            template.refresh(INDEX_NAME);
+//            LOGGER.info("BulkIndex completed: {}", ++COUNTER);
+//        } catch (Exception e) {
+//            LOGGER.error("Error bulk index", e);
+//        }
+//    }
+//
+//    private List<Employee> employees() {
+//        List<Employee> employees = new ArrayList<>();
+//        for (int i = 0; i < 10000; i++) {
+//            Random r = new Random();
+//            Employee employee = new Employee();
+//            employee.setName("JohnSmith" + r.nextInt(1000000));
+//            employee.setAge(r.nextInt(100));
+//            employee.setPosition("Developer");
+//            int departmentId = r.nextInt(500000);
+//            employee.setDepartment(new Department((long) departmentId, "TestD" + departmentId));
+//            int organizationId = departmentId / 100;
+//            employee.setOrganization(new Organization((long) organizationId, "TestO" + organizationId, "Test Street No. " + organizationId));
+//            employees.add(employee);
+//        }
+//        return employees;
+//    }
+
+
     public void bulk() {
         try {
             ObjectMapper mapper = new ObjectMapper();
             List<IndexQuery> queries = new ArrayList<>();
-            List<Employee> employees = employees();
-            for (Employee employee : employees) {
+            List<Song> songs = songs();
+            for (Song song : songs) {
                 IndexQuery indexQuery = new IndexQuery();
-                indexQuery.setSource(mapper.writeValueAsString(employee));
+                indexQuery.setSource(mapper.writeValueAsString(song));
                 indexQuery.setIndexName(INDEX_NAME);
                 indexQuery.setType(INDEX_TYPE);
                 queries.add(indexQuery);
@@ -61,21 +103,35 @@ public class SampleDataSet {
         }
     }
 
-    private List<Employee> employees() {
-        List<Employee> employees = new ArrayList<>();
+    private List<Song> songs() {
+        List<Song> songs = new ArrayList<>();
         for (int i = 0; i < 10000; i++) {
             Random r = new Random();
-            Employee employee = new Employee();
-            employee.setName("JohnSmith" + r.nextInt(1000000));
-            employee.setAge(r.nextInt(100));
-            employee.setPosition("Developer");
-            int departmentId = r.nextInt(500000);
-            employee.setDepartment(new Department((long) departmentId, "TestD" + departmentId));
-            int organizationId = departmentId / 100;
-            employee.setOrganization(new Organization((long) organizationId, "TestO" + organizationId, "Test Street No. " + organizationId));
-            employees.add(employee);
+            Song song = new Song();
+            song.setTitle("Bai Hat " + r.nextInt(1000000));
+            song.setContent("Mua van mua bay" + r.nextInt(1000000));
+
+            Long authorId, catId;
+            Author author = new Author();
+            Category category = new Category();
+
+            for(int j=0; j<r.nextInt(5);i++){
+                authorId = r.nextLong();
+                author = new Author(authorId,"Author" + r.nextInt(1000000));
+
+                catId = r.nextLong();
+                category = new Category(catId,"Category"+ r.nextInt(1000000));
+                song.getAuthors().add(author);
+                song.getCategories().add(category);
+
+            }
+
+            song.setContent("content noi dung bai hat " + r.nextInt(1000000));
+
+            songs.add(song);
+
         }
-        return employees;
+        return songs;
     }
 
 }
