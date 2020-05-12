@@ -1,13 +1,19 @@
 package xyz.jguru.springelasticsearch.repository;
 
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.elasticsearch.annotations.Query;
+import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 import xyz.jguru.springelasticsearch.model.Employee;
 
-import java.util.List;
+public interface EmployeeRepository extends ElasticsearchRepository<Employee, Long> {
 
-public interface EmployeeRepository extends CrudRepository<Employee, Long> {
+    Page<Employee> findByOrganizationName(String name, Pageable pageable);
+    Page<Employee> findByName(String name, Pageable pageable);
 
-    List<Employee> findByOrganizationName(String name);
-    List<Employee> findByName(String name);
+    @Query("{ \"match_phrase\": { \"name\": \"?0\" }}")
+    Page<Employee> findByNameHasWord(String word, Pageable pageable);
+
+    Page<Employee> findByNameContains(String word,Pageable pageable);
 
 }

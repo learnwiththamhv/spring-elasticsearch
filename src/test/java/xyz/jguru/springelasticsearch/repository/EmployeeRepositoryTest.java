@@ -9,13 +9,12 @@ import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.testcontainers.elasticsearch.ElasticsearchContainer;
 import xyz.jguru.springelasticsearch.model.Department;
 import xyz.jguru.springelasticsearch.model.Employee;
 import xyz.jguru.springelasticsearch.model.Organization;
-
-import java.util.List;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -53,14 +52,14 @@ public class EmployeeRepositoryTest {
 
     @Test
     public void testFindByOrganization() {
-        List<Employee> employees = repository.findByOrganizationName("TestO");
-        Assert.assertTrue(employees.size() > 0);
+        Page<Employee> employees = repository.findByOrganizationName("TestO",null);
+        Assert.assertTrue(employees.getTotalElements() > 0);
     }
 
     @Test
     public void testFindByName() {
-        List<Employee> employees = repository.findByName("John Smith");
-        Assert.assertTrue(employees.size() > 0);
+        Page<Employee> employees = repository.findByName("John Smith",null);
+        Assert.assertTrue(employees.getTotalElements() > 0);
     }
 
 }

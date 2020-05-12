@@ -1,11 +1,10 @@
 package xyz.jguru.springelasticsearch.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 import xyz.jguru.springelasticsearch.model.Employee;
 import xyz.jguru.springelasticsearch.repository.EmployeeRepository;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/employees")
@@ -20,13 +19,18 @@ public class EmployeeController {
     }
 
     @GetMapping("/{name}")
-    public List<Employee> findByName(@PathVariable("name") String name) {
-        return repository.findByName(name);
+    public Page<Employee> findByName(@PathVariable("name") String name) {
+        //return repository.findByName(name,null);
+        return repository.findByNameContains(name,null);
     }
 
+
+
     @GetMapping("/organization/{organizationName}")
-    public List<Employee> findByOrganizationName(@PathVariable("organizationName") String organizationName) {
-        return repository.findByOrganizationName(organizationName);
+    public Page<Employee> findByOrganizationName(@PathVariable("organizationName") String organizationName) {
+        return repository.findByOrganizationName(organizationName, null);
     }
+
+
 
 }
